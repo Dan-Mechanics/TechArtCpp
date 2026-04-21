@@ -33,6 +33,36 @@ int main() {
 
     glViewport(0, 0, width, height);
 
+    const auto maxFramerate = 60;
+    const auto maxFrameInterval = 1.0 / maxFramerate;
+    double previousTime = 0;
+    double lastFrameTime = 0;
+     // https://stackoverflow.com/questions/57800608/how-to-render-at-a-fixed-fps-in-a-glfw-window
+    // This while loop repeats as fast as possible
+    while (!glfwWindowShouldClose(window)) {
+        double currentTime = glfwGetTime();
+        double deltaTime = currentTime - previousTime;
+
+        glfwPollEvents();
+
+        // update your application logic here,
+        // using deltaTime if necessary (for physics, tweening, etc.)
+
+        // This if-statement only executes once every 60th of a second
+        if (currentTime - lastFrameTime >= maxFrameInterval) {
+            // RENDER.
+            glClearColor(0.5f, 0.2f, 0.9f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glfwSwapBuffers(window);
+
+            // only set lastFrameTime when you actually draw something
+            lastFrameTime = currentTime;
+        }
+
+        // set lastUpdateTime every iteration
+        previousTime = currentTime;
+    }
+
     while (!glfwWindowShouldClose(window)) {
         // INPUT.
         processInput(window);
@@ -45,6 +75,8 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+
 
     glfwTerminate();
     return 0;
