@@ -28,8 +28,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\default.vert" />
-    <None Include="src\default.frag" />
     <None Include="res\default.frag" />
     <None Include="res\default.vert" />
   </ItemGroup>

@@ -27,6 +27,7 @@ GLuint createTriangle() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stide, 0);
     glEnableVertexAttribArray(0);
 
+    // colors.
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stide, (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 

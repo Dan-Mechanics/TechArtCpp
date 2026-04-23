@@ -28,8 +28,6 @@
   <ItemGroup>
     <None Include="res\default.frag" />
     <None Include="res\default.vert" />
-    <None Include="src\default.frag" />
-    <None Include="src\default.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
