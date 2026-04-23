@@ -17,18 +17,18 @@ GLuint createTriangle() {
         0.0f,  0.5f, 0.0f,  0, 0, 1
     };
 
-    const auto stide = 6 * sizeof(float);
+    const auto stride = 6 * sizeof(float);
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stide, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
     glEnableVertexAttribArray(0);
 
     // colors.
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stide, (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
