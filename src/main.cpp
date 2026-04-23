@@ -1,16 +1,75 @@
 #include <iostream>	
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <chrono>
+#include "utils.hpp"
 
 void processInput(GLFWwindow* window);
 
+GLuint createTriangle() {
+    // id in video memory, reference with pointers.
+    GLuint vao; // vertex array object.
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    };
+
+    const auto stide = 3 * sizeof(float);
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stide, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0);
+
+    return vao;
+}
+
+GLuint createShaders() {
+    char* vertexSource;
+    char* fragmentSource;
+    loadFromFile("default.vert", vertexSource);
+    loadFromFile("default.frag", fragmentSource);
+
+    // ===
+
+    GLuint vert = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vert, 1, &vertexSource, nullptr);
+    glCompileShader(vert);
+    checkCompileErrors(vert, "VERTEX");
+
+    GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(frag, 1, &fragmentSource, nullptr);
+    glCompileShader(frag);
+    checkCompileErrors(frag, "FRAGMENT");
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vert);
+    glAttachShader(program, frag);
+
+    glLinkProgram(program);
+    checkCompileErrors(program, "PROGRAM");
+
+    return program;
+}
+
 /// <summary>
-/// https://learnopengl.com/Getting-started/Hello-Window
+/// TODO:
+/// max framerate, like in minectaft clone
 /// </summary>
 int main() {
     const auto width = 800;
     const auto height = 600;
-    
+    const std::clock_t startClock = std::clock();
+    auto startTime = std::chrono::high_resolution_clock::now();
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -33,50 +92,28 @@ int main() {
 
     glViewport(0, 0, width, height);
 
-    const auto maxFramerate = 60;
-    const auto maxFrameInterval = 1.0 / maxFramerate;
-    double previousTime = 0;
-    double lastFrameTime = 0;
-     // https://stackoverflow.com/questions/57800608/how-to-render-at-a-fixed-fps-in-a-glfw-window
-    // This while loop repeats as fast as possible
-    while (!glfwWindowShouldClose(window)) {
-        double currentTime = glfwGetTime();
-        double deltaTime = currentTime - previousTime;
-
-        glfwPollEvents();
-
-        // update your application logic here,
-        // using deltaTime if necessary (for physics, tweening, etc.)
-
-        // This if-statement only executes once every 60th of a second
-        if (currentTime - lastFrameTime >= maxFrameInterval) {
-            // RENDER.
-            glClearColor(0.5f, 0.2f, 0.9f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-            glfwSwapBuffers(window);
-
-            // only set lastFrameTime when you actually draw something
-            lastFrameTime = currentTime;
-        }
-
-        // set lastUpdateTime every iteration
-        previousTime = currentTime;
-    }
-
+    // create assets
+    GLuint triangle = createTriangle();
+    GLuint diffuse = createShaders();
+    
     while (!glfwWindowShouldClose(window)) {
         // INPUT.
         processInput(window);
+
+        auto currTime = std::chrono::high_resolution_clock::now();
 
         // RENDER.
         glClearColor(0.5f, 0.2f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUseProgram(diffuse);
+        glBindVertexArray(triangle);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         // SWAP AND POLL.
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-
 
     glfwTerminate();
     return 0;
