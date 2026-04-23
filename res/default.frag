@@ -23,7 +23,7 @@ void main() {
 	vec3 reflectDir = reflect(-lightDir, Normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 8.0f);
 	vec3 specular = lightColor * spec;
-
+	
 	//FragColor = vec4(vColor, 1.0f);
 	FragColor = vec4(vColor * specular, 1.0f);
 }
