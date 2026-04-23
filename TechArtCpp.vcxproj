@@ -26,6 +26,8 @@
     <ClInclude Include="src\utils.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\default.frag" />
+    <None Include="res\default.vert" />
     <None Include="src\default.frag" />
     <None Include="src\default.vert" />
   </ItemGroup>

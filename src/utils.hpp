@@ -5,8 +5,10 @@
 #include <fstream>
 #include <glad/glad.h>
 
+const char* resourceDirectory = "res/";
+
 void loadFromFile(std::string url, char*& buf) {
-	std::ifstream stream("res/" + url, std::ios::binary);
+	std::ifstream stream(resourceDirectory + url, std::ios::binary);
 
 	stream.seekg(0, stream.end);
 	std::streamoff total = stream.tellg();
