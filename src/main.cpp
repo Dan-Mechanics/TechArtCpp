@@ -4,7 +4,18 @@
 #include <chrono>
 #include "utils.hpp"
 
-void processInput(GLFWwindow* window);
+const auto width = 800u;
+const auto height = 700u;
+
+const auto framerateLimit = 300;
+const auto tickrate = 50;
+const auto maxFrameInterval = 1.0 / framerateLimit;
+const auto minTickInterval = 1.0f / tickrate;
+
+void processInput(GLFWwindow* window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
 
 GLuint createTriangle() {
     // id in video memory, reference with pointers.
@@ -65,16 +76,11 @@ GLuint createShaders() {
 }
 
 /// <summary>
-/// TODO:
-/// max framerate, like in minectaft clone
 /// https://github.com/assimp/assimp
+/// https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
+/// https://youtu.be/O38kFTJiIYc?si=5-dekEgrKSK0pBrR
 /// </summary>
 int main() {
-    const auto width = 800;
-    const auto height = 600;
-    const std::clock_t startClock = std::clock();
-    auto startTime = std::chrono::high_resolution_clock::now();
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -89,7 +95,6 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
@@ -101,11 +106,30 @@ int main() {
     GLuint triangle = createTriangle();
     GLuint diffuse = createShaders();
     
-    while (!glfwWindowShouldClose(window)) {
-        // INPUT.
-        processInput(window);
+    auto previous = glfwGetTime();
+    auto lastUpdateTime = glfwGetTime();
+    auto updateTimer = 0.0;
+    auto tickTimer = 0.0f;
 
-        auto currTime = std::chrono::high_resolution_clock::now();
+    glfwSwapInterval(0);
+    while (!glfwWindowShouldClose(window)) {
+        const auto current = glfwGetTime();
+        updateTimer += current - previous;
+        previous = current;
+
+        glfwPollEvents();
+        if (updateTimer < maxFrameInterval)
+            continue;
+
+        const auto deltaTime = current - lastUpdateTime;
+        lastUpdateTime = current;
+        updateTimer = 0.0f;
+
+        const auto title = "fps: " + std::to_string(round(1.0f / deltaTime));
+        glfwSetWindowTitle(window, title.c_str());
+
+        // UPDATE. ===
+        processInput(window);
 
         // RENDER.
         glClearColor(0.5f, 0.2f, 0.9f, 1.0f);
@@ -120,11 +144,7 @@ int main() {
         glfwPollEvents();
     }
 
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
-}
-
-void processInput(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 }
