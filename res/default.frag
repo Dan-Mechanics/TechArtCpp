@@ -20,10 +20,11 @@ void main() {
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 
 	float shininess = 0.5f;
+	float ambient = 0.5f;
+
 	vec3 reflectDir = reflect(-lightDir, Normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 8.0f);
 	vec3 specular = lightColor * spec;
 	
-	//FragColor = vec4(vColor, 1.0f);
-	FragColor = vec4(vColor * specular, 1.0f);
+	FragColor = vec4(vColor * specular + vColor * ambient, 1.0f);
 }
