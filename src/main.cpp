@@ -121,7 +121,7 @@ int main() {
         if (updateTimer < maxFrameInterval)
             continue;
 
-        const auto deltaTime = current - lastUpdateTime;
+        const auto deltaTime = static_cast<float>(current - lastUpdateTime);
         lastUpdateTime = current;
         updateTimer = 0.0f;
 
