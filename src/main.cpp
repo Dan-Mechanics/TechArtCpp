@@ -139,9 +139,7 @@ int main() {
         glBindVertexArray(triangle);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        // SWAP AND POLL.
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     glfwDestroyWindow(window);
